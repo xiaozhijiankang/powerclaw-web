@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PowerClaw — AI-Powered Strength Training</title>
+<meta name="description" content="PowerClaw generates personalized 12-week training plans, tracks every set, and answers your form questions through an AI coach that knows your training history.">
+<meta property="og:title" content="PowerClaw — AI-Powered Strength Training">
+<meta property="og:description" content="Personalized AI training plans, an AI coach that knows your data, and effortless workout tracking — all in one iPhone app.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://powerclaw.app/">
+<meta name="theme-color" content="#0D0D0D">
+<link rel="icon" type="image/png" href="assets/logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@48,500,1,0">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --brand: #4CAF50;
+    --brand-dark: #388E3C;
+    --brand-light: #66BB6A;
+    --brand-tint: rgba(76, 175, 80, 0.1);
+    --bg-page: #0D0D0D;
+    --bg-surface: #1A1A1A;
+    --bg-surface-2: #232323;
+    --bg-elevated: #2A2A2A;
+    --text-primary: #FFFFFF;
+    --text-secondary: #D4D4D4;
+    --text-tertiary: #A3A3A3;
+    --text-muted: #666666;
+    --border: #262626;
+    --border-strong: #333333;
+  }
+  /* Material Symbols Rounded — declares the .ms class so <span class="ms">icon_name</span> renders as a glyph */
+  .ms {
+    font-family: 'Material Symbols Rounded';
+    font-weight: 500;
+    font-style: normal;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+    font-variation-settings: 'FILL' 1, 'wght' 500, 'GRAD' 0, 'opsz' 48;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg-page);
+    color: var(--text-primary);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* iPhone device frame — wraps a 1320x2868 screenshot */
+  .phone {
+    position: relative;
+    width: 100%;
+    max-width: 320px;
+    aspect-ratio: 1320 / 2868;
+    background: #1C1C1E;
+    border-radius: 50px;
+    padding: 12px;
+    box-shadow:
+      0 30px 60px rgba(0, 0, 0, 0.5),
+      0 0 0 1px rgba(255, 255, 255, 0.06) inset;
+    margin: 0 auto;
+  }
+  .phone img {
+    width: 100%; height: 100%;
+    border-radius: 38px;
+    display: block;
+    object-fit: cover;
+  }
+  /* Dynamic Island */
+  .phone::before {
+    content: ""; position: absolute;
+    top: 20px; left: 50%; transform: translateX(-50%);
+    width: 100px; height: 30px;
+    background: #000;
+    border-radius: 16px;
+    z-index: 2;
+  }
+  .phone.lg { max-width: 380px; }
+
+  /* Top nav */
+  nav.top {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(13, 13, 13, 0.85);
+    backdrop-filter: saturate(180%) blur(20px);
+    -webkit-backdrop-filter: saturate(180%) blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav.top .inner {
+    max-width: 1180px; margin: 0 auto;
+    padding: 14px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  nav.top .logo {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--text-primary); text-decoration: none;
+    font-weight: 700; font-size: 18px;
+  }
+  nav.top .logo img { width: 28px; height: 28px; border-radius: 6px; }
+  nav.top ul { list-style: none; display: flex; align-items: center; gap: 24px; }
+  nav.top a { color: var(--text-secondary); text-decoration: none; font-size: 14px; font-weight: 500; }
+  nav.top a:hover { color: var(--text-primary); }
+  nav.top .btn-cta {
+    background: var(--brand);
+    color: #000;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  nav.top .btn-cta:hover { background: var(--brand-light); color: #000; }
+  .desktop-only { display: list-item; }
+  @media (max-width: 640px) { .desktop-only { display: none; } }
+
+  /* Section + container */
+  .section { padding: 96px 24px; }
+  .container { max-width: 1180px; margin: 0 auto; }
+  h1, h2, h3, h4 { font-weight: 800; letter-spacing: -0.02em; line-height: 1.1; }
+  h1 span, h2 span { color: var(--brand); }
+  .eyebrow {
+    display: inline-block;
+    text-transform: uppercase; letter-spacing: 0.12em;
+    font-size: 12px; font-weight: 700;
+    color: var(--brand);
+    margin-bottom: 16px;
+  }
+  .section-lead { color: var(--text-tertiary); font-size: 18px; max-width: 720px; margin: 16px 0 56px; }
+
+  /* HERO */
+  section.hero {
+    padding: 80px 24px 96px;
+    background:
+      radial-gradient(1100px 600px at 80% 10%, rgba(76, 175, 80, 0.08), transparent 60%),
+      radial-gradient(800px 500px at 10% 80%, rgba(76, 175, 80, 0.04), transparent 60%),
+      var(--bg-page);
+  }
+  section.hero .inner {
+    max-width: 1180px; margin: 0 auto;
+    display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px;
+    align-items: center;
+  }
+  section.hero h1 { font-size: clamp(40px, 6vw, 72px); margin: 12px 0 24px; }
+  section.hero .lead { color: var(--text-tertiary); font-size: 19px; max-width: 540px; margin-bottom: 36px; }
+  .hero-pillars { display: flex; flex-direction: column; gap: 16px; margin-bottom: 36px; }
+  .hero-pillar { display: flex; gap: 14px; align-items: center; }
+  .hero-pillar .icon {
+    flex-shrink: 0;
+    width: 44px; height: 44px;
+    background: var(--brand-tint);
+    border: 1px solid rgba(76, 175, 80, 0.25);
+    border-radius: 10px;
+    display: grid; place-items: center;
+    color: var(--brand);
+  }
+  .hero-pillar .icon .ms { font-size: 22px; }
+  .hero-pillar .txt strong { display: block; color: var(--text-primary); font-weight: 600; font-size: 15px; }
+  .hero-pillar .txt span { color: var(--text-tertiary); font-size: 14px; }
+  .stores { display: flex; gap: 12px; flex-wrap: wrap; }
+  .store-btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #fff; color: #000;
+    padding: 10px 18px;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: transform 0.15s ease;
+  }
+  .store-btn:hover { transform: translateY(-2px); }
+  .store-btn svg { width: 24px; height: 24px; fill: #000; }
+  .store-btn .meta { display: flex; flex-direction: column; line-height: 1.15; }
+  .store-btn .meta small { font-size: 10px; opacity: 0.7; }
+  .store-btn .meta strong { font-size: 15px; font-weight: 600; }
+  .store-btn.disabled {
+    background: var(--bg-surface);
+    color: var(--text-tertiary);
+    pointer-events: none;
+    opacity: 0.7;
+  }
+  .store-btn.disabled svg { fill: var(--text-tertiary); }
+
+  @media (max-width: 900px) {
+    section.hero .inner { grid-template-columns: 1fr; gap: 48px; }
+    section.hero h1 { text-align: center; }
+    section.hero .lead { text-align: center; margin-left: auto; margin-right: auto; }
+    .hero-pillars { max-width: 480px; margin-left: auto; margin-right: auto; }
+    .stores { justify-content: center; }
+  }
+
+  /* FEATURES */
+  #features { background: var(--bg-page); }
+  #features h2 { font-size: clamp(32px, 4.5vw, 48px); }
+  .features {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+  }
+  .feature-card {
+    background: var(--bg-surface);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 32px;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+  }
+  .feature-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--border-strong);
+  }
+  .feature-icon {
+    width: 48px; height: 48px;
+    background: var(--brand-tint);
+    border: 1px solid rgba(76, 175, 80, 0.25);
+    border-radius: 12px;
+    display: grid; place-items: center;
+    color: var(--brand);
+    margin-bottom: 20px;
+  }
+  .feature-icon .ms { font-size: 26px; }
+  .feature-card h3 { font-size: 20px; margin-bottom: 12px; }
+  .feature-card p { color: var(--text-tertiary); font-size: 15px; line-height: 1.6; }
+  @media (max-width: 900px) { .features { grid-template-columns: 1fr; } }
+
+  /* SHOWCASE */
+  #screenshots { background: linear-gradient(180deg, var(--bg-page) 0%, #0A0A0A 100%); }
+  #screenshots h2 { font-size: clamp(32px, 4.5vw, 48px); }
+  .showcase-grid {
+    display: grid; grid-template-columns: repeat(5, 1fr); gap: 24px;
+    margin-top: 16px;
+  }
+  .ss-card { text-align: center; }
+  .ss-card .phone { margin-bottom: 18px; max-width: 220px; }
+  .ss-card h4 { font-size: 16px; margin-bottom: 8px; }
+  .ss-card p { color: var(--text-tertiary); font-size: 13px; line-height: 1.5; }
+  @media (max-width: 1100px) { .showcase-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (max-width: 700px) { .showcase-grid { grid-template-columns: repeat(2, 1fr); gap: 32px 16px; } }
+  @media (max-width: 420px) { .showcase-grid { grid-template-columns: 1fr; } }
+
+  /* PRO */
+  #pro {
+    background:
+      radial-gradient(800px 500px at 90% 50%, rgba(76, 175, 80, 0.08), transparent 60%),
+      var(--bg-surface);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  #pro .inner {
+    display: grid; grid-template-columns: 1.2fr 1fr; gap: 64px;
+    align-items: center;
+  }
+  #pro h2 { font-size: clamp(32px, 4.5vw, 48px); }
+  #pro .lead { color: var(--text-tertiary); font-size: 18px; margin: 16px 0 28px; }
+  .pro-points {
+    list-style: none; display: flex; flex-direction: column; gap: 14px;
+    margin-top: 8px;
+  }
+  .pro-points li {
+    display: flex; align-items: flex-start; gap: 12px;
+    color: var(--text-secondary); font-size: 16px;
+  }
+  .pro-points li::before {
+    content: "✓";
+    color: var(--brand);
+    font-weight: 800;
+    flex-shrink: 0;
+    width: 22px; height: 22px;
+    background: var(--brand-tint);
+    border-radius: 50%;
+    display: grid; place-items: center;
+    font-size: 13px;
+  }
+  @media (max-width: 900px) { #pro .inner { grid-template-columns: 1fr; gap: 48px; } }
+
+  /* CTA */
+  section.cta {
+    padding: 120px 24px;
+    background:
+      radial-gradient(900px 500px at 50% 30%, rgba(76, 175, 80, 0.12), transparent 60%),
+      var(--bg-page);
+    text-align: center;
+  }
+  section.cta h2 { font-size: clamp(36px, 5vw, 56px); margin-bottom: 16px; }
+  section.cta p { color: var(--text-tertiary); font-size: 18px; margin-bottom: 36px; }
+  section.cta .stores { justify-content: center; }
+
+  /* Footer */
+  footer {
+    background: #080808;
+    border-top: 1px solid var(--border);
+    padding: 64px 24px 32px;
+  }
+  footer .inner { max-width: 1180px; margin: 0 auto; }
+  .footer-grid {
+    display: grid; grid-template-columns: 1.4fr 1fr 1fr 1fr; gap: 48px;
+    margin-bottom: 48px;
+  }
+  .footer-brand .logo {
+    display: flex; align-items: center; gap: 10px;
+    color: var(--text-primary); text-decoration: none;
+    font-weight: 700; font-size: 22px;
+    margin-bottom: 16px;
+  }
+  .footer-brand .logo img { width: 36px; height: 36px; border-radius: 8px; }
+  .footer-brand p { color: var(--text-tertiary); font-size: 14px; max-width: 300px; line-height: 1.7; }
+  footer h5 { font-size: 12px; text-transform: uppercase; letter-spacing: 0.12em; color: var(--text-muted); margin-bottom: 16px; font-weight: 700; }
+  footer ul { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+  footer ul a { color: var(--text-secondary); text-decoration: none; font-size: 14px; transition: color 0.15s; }
+  footer ul a:hover { color: var(--brand); }
+  .pill {
+    display: inline-block;
+    background: var(--bg-elevated);
+    color: var(--text-tertiary);
+    font-size: 10px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+  .footer-bottom {
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+    display: flex; justify-content: space-between; align-items: center;
+    color: var(--text-muted); font-size: 13px;
+  }
+  @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 32px; } }
+  @media (max-width: 540px) {
+    .footer-grid { grid-template-columns: 1fr; }
+    .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="top">
+  <div class="inner">
+    <a href="#" class="logo"><img src="assets/logo.png" alt="PowerClaw logo">PowerClaw</a>
+    <ul>
+      <li class="desktop-only"><a href="#features">Features</a></li>
+      <li class="desktop-only"><a href="#screenshots">Screenshots</a></li>
+      <li class="desktop-only"><a href="#pro">Pro</a></li>
+      <li><a href="#download" class="btn-cta">Download</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="inner">
+    <div>
+      <div class="eyebrow">AI-Powered Strength Training</div>
+      <h1>Your AI strength<br>coach in your <span>pocket.</span></h1>
+      <p class="lead">PowerClaw generates personalized 12-week training plans, logs every set, and answers your form questions through an AI coach that knows your training history.</p>
+
+      <div class="hero-pillars">
+        <div class="hero-pillar">
+          <div class="icon"><span class="ms">auto_awesome</span></div>
+          <div class="txt">
+            <strong>Personalized AI Plans</strong>
+            <span>12-week programs adapted to your goals, body, and equipment.</span>
+          </div>
+        </div>
+        <div class="hero-pillar">
+          <div class="icon"><span class="ms">forum</span></div>
+          <div class="txt">
+            <strong>AI Coach Chat</strong>
+            <span>Ask anything — your AI coach knows your full training history.</span>
+          </div>
+        </div>
+        <div class="hero-pillar">
+          <div class="icon"><span class="ms">fitness_center</span></div>
+          <div class="txt">
+            <strong>Effortless Tracking</strong>
+            <span>Curated exercise library with set-by-set logging and progress.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="stores">
+        <a href="#" class="store-btn disabled" aria-label="App Store — Coming Soon">
+          <svg viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+          <span class="meta"><small>Coming soon to the</small><strong>App Store</strong></span>
+        </a>
+        <a href="#" class="store-btn disabled" aria-label="Google Play — Coming Soon">
+          <svg viewBox="0 0 24 24"><path d="M3.609 1.814 13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a.996.996 0 0 1 .609-.92zm10.89 10.893 2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198 2.807 1.626a1 1 0 0 1 0 1.732l-2.808 1.626L15.207 12l2.491-2.491zM5.864 2.658 16.802 8.99l-2.302 2.302L5.864 2.658z"/></svg>
+          <span class="meta"><small>Coming soon</small><strong>Google Play</strong></span>
+        </a>
+      </div>
+    </div>
+    <div>
+      <div class="phone lg">
+        <img src="assets/screenshots/07-active-workout.png" alt="PowerClaw active workout screen showing set-by-set tracking">
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="section" id="features">
+  <div class="container">
+    <h2>Three pillars. <span>Zero guesswork.</span></h2>
+    <p class="section-lead">Everything PowerClaw does is in service of one thing — turning strength training into measurable progress.</p>
+    <div class="features">
+      <div class="feature-card">
+        <div class="feature-icon"><span class="ms">auto_awesome</span></div>
+        <h3>Personalized AI Plans</h3>
+        <p>Built around your body composition, training history, goals, and available equipment. 12-week progressive programs that adapt as you train — not generic templates.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><span class="ms">forum</span></div>
+        <h3>AI Coach Chat</h3>
+        <p>An expert AI coach with full access to your plan and training data. Ask about form, recovery, plan adjustments, or anything strength-related — get answers grounded in your history.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon"><span class="ms">fitness_center</span></div>
+        <h3>Effortless Tracking</h3>
+        <p>Curated exercise library with reference visuals. Log sets, reps, and weights as you train. Calendar view, volume tracking, and streak metrics — the data that proves progress.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SCREENSHOTS -->
+<section class="section showcase" id="screenshots">
+  <div class="container">
+    <h2>See it in <span>action.</span></h2>
+    <p class="section-lead">From your first plan to logging your last rep — here's what the workflow looks like.</p>
+    <div class="showcase-grid">
+      <div class="ss-card">
+        <div class="phone">
+          <img src="assets/screenshots/03c-plan-12week.png" alt="12-week AI training plan">
+        </div>
+        <h4>Your AI Plan</h4>
+        <p>12 weeks ahead, every workout already scheduled.</p>
+      </div>
+      <div class="ss-card">
+        <div class="phone">
+          <img src="assets/screenshots/05-library.png" alt="Exercise library">
+        </div>
+        <h4>Exercise Library</h4>
+        <p>Curated catalog with reference demos for every lift.</p>
+      </div>
+      <div class="ss-card">
+        <div class="phone">
+          <img src="assets/screenshots/07-active-workout.png" alt="Active workout tracking">
+        </div>
+        <h4>Live Tracking</h4>
+        <p>Set-by-set logging with weights, reps, and rest timer.</p>
+      </div>
+      <div class="ss-card">
+        <div class="phone">
+          <img src="assets/screenshots/04-coach-chat.png" alt="AI coach chat interface">
+        </div>
+        <h4>AI Coach</h4>
+        <p>Ask anything. Your coach knows your full training history.</p>
+      </div>
+      <div class="ss-card">
+        <div class="phone">
+          <img src="assets/screenshots/08-me-subscribed.png" alt="Profile and progress page">
+        </div>
+        <h4>Your Progress</h4>
+        <p>Total volume, workouts logged, and streaks — at a glance.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRO -->
+<section class="section pro" id="pro">
+  <div class="container">
+    <div class="inner">
+      <div>
+        <div class="eyebrow">PowerClaw Pro</div>
+        <h2>Train smarter. <span>Pay what you want.</span></h2>
+        <p class="lead">PowerClaw Pro unlocks the AI plans and unlimited coach chat. Choose what fits — every tier supports the project.</p>
+        <ul class="pro-points">
+          <li>Personalized 12-week AI training plans</li>
+          <li>Unlimited AI coach conversations</li>
+          <li>Full plan adjustments and re-planning anytime</li>
+          <li>Pay $5, $10, or $20 monthly — cancel anytime in App Store</li>
+        </ul>
+      </div>
+      <div>
+        <div class="phone">
+          <img src="assets/screenshots/00-paywall.png" alt="PowerClaw Pro subscription tiers">
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="download">
+  <div class="container">
+    <h2>Train with <span>PowerClaw</span> soon.</h2>
+    <p>Coming to iPhone — Google Play planned for a future release.</p>
+    <div class="stores">
+      <a href="#" class="store-btn disabled" aria-label="App Store — Coming Soon">
+        <svg viewBox="0 0 24 24"><path d="M17.05 20.28c-.98.95-2.05.8-3.08.35-1.09-.46-2.09-.48-3.24 0-1.44.62-2.2.44-3.06-.35C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.08zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/></svg>
+        <span class="meta"><small>Coming soon to the</small><strong>App Store</strong></span>
+      </a>
+      <a href="#" class="store-btn disabled" aria-label="Google Play — Coming Soon">
+        <svg viewBox="0 0 24 24"><path d="M3.609 1.814 13.792 12 3.61 22.186a.996.996 0 0 1-.61-.92V2.734a.996.996 0 0 1 .609-.92zm10.89 10.893 2.302 2.302-10.937 6.333 8.635-8.635zm3.199-3.198 2.807 1.626a1 1 0 0 1 0 1.732l-2.808 1.626L15.207 12l2.491-2.491zM5.864 2.658 16.802 8.99l-2.302 2.302L5.864 2.658z"/></svg>
+        <span class="meta"><small>Coming soon</small><strong>Google Play</strong></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="inner">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="#" class="logo"><img src="assets/logo.png" alt="PowerClaw logo">PowerClaw</a>
+        <p>AI-powered strength training. Personalized plans, an AI coach, and effortless tracking — built for the iPhone.</p>
+      </div>
+      <div>
+        <h5>Legal</h5>
+        <ul>
+          <li><a href="/privacy">Privacy Policy</a></li>
+          <li><a href="/terms">Terms of Service</a></li>
+          <li><a href="/support">Support</a></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Platforms</h5>
+        <ul>
+          <li>iOS <span class="pill">Soon</span></li>
+          <li>Android <span class="pill">Planned</span></li>
+        </ul>
+      </div>
+      <div>
+        <h5>Contact</h5>
+        <ul>
+          <li><a href="mailto:support@powerclaw.app">support@powerclaw.app</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 PowerClaw. All rights reserved.</span>
+      <span>Built for lifters who measure progress.</span>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

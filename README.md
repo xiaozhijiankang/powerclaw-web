@@ -1,60 +1,76 @@
-# PowerClaw Marketing Site
+# PowerClaw 国内官网
 
-Static landing page for [powerclaw.app](https://powerclaw.app/), hosted on GitHub Pages.
+北京贰零贰零科技发展有限公司旗下 PowerClaw 产品官网。中文默认，支持英文；两种语言共用同一运营主体和业务，不区分国内外版本。
 
-## Structure
+## 页面与维护
 
-```
-.
-├── CNAME                 # GitHub Pages custom domain (powerclaw.app)
-├── index.html            # Landing page (single-file, no build)
-├── assets/
-│   ├── logo.png          # App icon (96×96)
-│   └── screenshots/      # iPhone 17 Pro Max captures (1320×2868)
-├── privacy/index.html    # → /privacy
-├── terms/index.html      # → /terms
-└── support/index.html    # → /support
-```
+纯静态 HTML，无构建步骤、无前端依赖、无语言切换脚本。下载状态通过本地 Python 辅助脚本同步修改静态页面。
 
-No build step. Pure static HTML + inline CSS. Edit files, commit, push — GitHub Pages serves the change in ~30 seconds.
+| 页面 | 中文 | 英文 |
+| --- | --- | --- |
+| 首页（含公司介绍） | `/` | `/en/` |
+| 服务协议 | `/terms/` | `/en/terms/` |
+| 隐私政策 | `/privacy/` | `/en/privacy/` |
+| 用户支持 | `/support/` | `/en/support/` |
 
-## Local preview
+每页通过普通链接切换到对应语言的页面。页内导航和页脚保持当前语言。中文法定公司名称在两个版本中保持一致。无自动地区跳转，不使用 Cookie 或本地存储记忆语言。
 
-```bash
-open index.html
-# or run a tiny server if you need clean URLs:
-python3 -m http.server 8000
-```
+- `assets/home.css`：首页现有黑绿视觉样式及响应式布局。
+- `assets/document.css`：协议与支持页面的阅读布局。
+- `assets/shared.css`：语言切换、焦点、跳转正文、减少动画偏好。
+- `assets/screenshots/`：现有 App 截图。页面明确说明为现有英文界面，未伪造中文版截图。
+- 字体采用系统字体；功能图标为内联 SVG。无 Google Fonts、第三方统计或运行时 CDN 依赖。
 
-## Deploying
+更新文案时同步修改中英文页面；更新页脚时同步修改全部 8 页。每页的 canonical、hreflang 和 Open Graph 地址以 `https://powerclawapp.cn` 为基准，域名变化时需同步更新。现有 App 使用的 `/privacy`、`/terms`、`/support` 地址应继续通过静态服务器的目录跳转正常访问。
 
-GitHub Pages is configured to serve from `main` branch root. Every push to `main` triggers a deploy.
+## 本地预览
 
-## Custom domain (DNS)
+在仓库根目录运行：
 
-`powerclaw.app` apex domain points to GitHub Pages via A records:
-
-```
-A  powerclaw.app  185.199.108.153
-A  powerclaw.app  185.199.109.153
-A  powerclaw.app  185.199.110.153
-A  powerclaw.app  185.199.111.153
+```sh
+python3 -m http.server 8000 --bind 127.0.0.1
 ```
 
-For `www` subdomain (optional, recommended):
+打开 `http://127.0.0.1:8000/`。请通过 HTTP 预览；站内资源使用从域名根目录开始的绝对路径，不支持直接双击文件或挂载到非根路径。
 
+## 当前交付边界
+
+- 已完成中文默认及中英文页面对应切换、公司介绍、国内文案调整和静态资源本地化。
+- **协议已按原官网结构和已确认的国内业务整理为干净的候选发布文本；页面不显示内部编辑备注，仍保留 `noindex`。这不代表实现核对完成或协议已发布生效。**
+- ICP、App 备案号尚未提供，页面没有虚构号码或“备案中”声明。页脚仅在 HTML 注释中保留说明，待取得真实号码后补充。
+- 官网按正式产品展示制作，不以测试招募为主。App 实际仍在 TestFlight，当前下载按钮为原生 disabled 按钮，无可点击地址；不宣称已上架。
+- AI 问答继续提供，当前暂时免费；已移除 Pro 和订阅宣传。
+- 已确认腾讯云北京服务器，正式域名 powerclawapp.cn；ICP备案正在填写材料，尚未提交。
+- 用户已修正客服邮箱为 `support@powerclawapp.cn`，上线前应验证可收信。
+- App 仅支持 Apple 登录，需登录后使用，无额外注册资料填写；已同步至中英文协议及支持页。训练记录和 AI 对话确认保存在腾讯云北京服务器，通过智谱官方开放平台 API 调用 GLM-5.2；实际发送字段及服务方处理规则仍待核实。
+- App 的“我的”页面提供“退出登录”和“删除账号”；用户支持与协议已说明 App 内注销路径。用户确认删除账号后立即删除服务器中的对应训练记录、AI 对话及相关备份；已更新政策和支持说明，未独立验证后端实现。
+- 本仓库没有 App 或 API 实现；页面改动不代表服务器迁移、App 合规完成或备案获批。
+
+## 上线前需完成
+
+逐轮确认的信息、当前进度和后续操作统一记录在 [上线清单](LAUNCH-CHECKLIST.md)。
+
+1. 核实域名实名认证与腾讯云备案资源条件，完成当前材料填写。`CNAME` 和全部页面元信息已改为 powerclawapp.cn；未修改 DNS、GitHub Pages 设置或云服务。腾讯云静态部署本身不读取 GitHub Pages 的 CNAME 文件。
+2. 取得真实备案结果后，为所有页面添加 ICP 备案号及 `https://beian.miit.gov.cn/` 链接；公安备案完成后按取得的信息添加展示和查询链接。App 备案信息按实际结果配置，不与网站备案号混用。
+3. 按实际 App 完善隐私政策：处理信息清单、必要性、权限、第三方服务、存储地点、数据出境、保存期限、注销删除及权利请求流程。旧政策出现的 Firebase、境外云和 AI 服务商等信息未被证实；未列入新草案不代表后端停用了这些服务。
+4. 已确认最低年龄 14 周岁，14—17 周岁需监护人同意；核实 App 内年龄提示、监护人确认及用户支持流程，完成中英文协议校对。正式发布前确认最终文本与生效安排，移除两种语言法律页的 `noindex`。
+5. App 正式上架后，确认真实商店地址再启用下载按钮。必要时替换为真实中文截图。
+6. 按接入商流程完成备案和国内部署切换，验证 HTTPS、旧链接、手机布局及语言切换。
+
+原 README 记录 GitHub Pages 从 `main` 根目录发布；应在仓库设置中核实。当前改动只在本地，推送前应注意自动发布配置。不要将这份含未定稿协议的改动直接作为正式上线版本发布。
+
+2026-09-10 部署进度：已在腾讯云 Ubuntu 24.04 上完成首版内部部署和 8 页校验，仅监听服务器 `127.0.0.1:8080`。GitHub Actions 文件已在本地准备，尚未推送或运行；完整状态及权限配置见 [部署说明](DEPLOYMENT.md)。
+
+## 控制下载按钮
+
+当前中英文首页各两个 App Store 按钮均已置灰。原生 `disabled` 确保无法通过鼠标或键盘激活；页面不包含隐藏的商店下载地址。顶部“下载应用”仍用于滚动到下载区域。
+
+保持关闭：
+
+```sh
+python3 scripts/set-download.py --disable
 ```
-CNAME  www.powerclaw.app  xiaozhijiankang.github.io
-```
 
-After DNS propagates, enable **Enforce HTTPS** in repo Settings → Pages. The `.app` TLD requires HTTPS by registry policy (HSTS preload).
+启用时运行 `python3 scripts/set-download.py --url '已核实的完整 App Store HTTPS 地址'`，用真实地址替换引号中的说明。脚本仅接受 `apps.apple.com` 的应用详情地址，一次更新中英文首页四处按钮。该操作只修改本地 HTML，需要正常发布后才在线上生效；没有新增后台或浏览器脚本。
 
-## Updating screenshots
-
-Source PNGs live in `PowerClaw-Native/.asc/screenshots/` (1320×2868 from iPhone 17 Pro Max simulator). Copy any updates into `assets/screenshots/` keeping filenames stable so the `<img src>` references in `index.html` keep working.
-
-## Legal pages
-
-Content is portable PowerClaw policy text (no platform / domain hardcoding). To update, edit `privacy/index.html`, `terms/index.html`, or `support/index.html` directly.
-
-The PowerClaw iOS app links to `https://powerclaw.app/privacy` etc. Keep those URLs stable.
+备案字段与备注参考见 [备案填写参考](ICP-FILING.md)。客服已确认为 `support@powerclawapp.cn`，与正式官网域名一致。App 内原域名的协议链接需更新或安排旧域名跳转，修改本站不会自动修改 App。

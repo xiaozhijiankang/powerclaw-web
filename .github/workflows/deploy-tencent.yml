@@ -1,0 +1,51 @@
+name: Deploy to Tencent Cloud
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: powerclaw-tencent-deployment
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: tencent-server
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package public website
+        run: python3 scripts/package-site.py "$RUNNER_TEMP/site.tar.gz"
+      - name: Deploy and verify all pages
+        shell: bash
+        env:
+          DEPLOY_HOST: ${{ secrets.DEPLOY_HOST }}
+          DEPLOY_USER: ${{ secrets.DEPLOY_USER }}
+          DEPLOY_PORT: ${{ secrets.DEPLOY_PORT }}
+          DEPLOY_KEY: ${{ secrets.DEPLOY_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.DEPLOY_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          : "${DEPLOY_HOST:?Missing DEPLOY_HOST}"
+          : "${DEPLOY_USER:?Missing DEPLOY_USER}"
+          : "${DEPLOY_KEY:?Missing DEPLOY_SSH_KEY}"
+          : "${KNOWN_HOSTS:?Missing DEPLOY_KNOWN_HOSTS}"
+          DEPLOY_PORT=${DEPLOY_PORT:-22}
+          [[ "$DEPLOY_HOST" =~ ^[a-zA-Z0-9.-]+$ ]]
+          [[ "$DEPLOY_USER" =~ ^[a-z_][a-z0-9_-]*$ ]]
+          [[ "$DEPLOY_PORT" =~ ^[0-9]+$ ]]
+          umask 077
+          key="$RUNNER_TEMP/deploy-key"
+          hosts="$RUNNER_TEMP/deploy-known-hosts"
+          trap 'rm -f "$key" "$hosts"' EXIT
+          printf '%s\n' "$DEPLOY_KEY" > "$key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$hosts"
+          opts=(-i "$key" -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o "UserKnownHostsFile=$hosts" -o ConnectTimeout=20)
+          remote="$DEPLOY_USER@$DEPLOY_HOST"
+          release="$GITHUB_RUN_ID-$GITHUB_RUN_ATTEMPT"
+          ssh "${opts[@]}" -p "$DEPLOY_PORT" "$remote" "mkdir -p ~/incoming/$release"
+          scp "${opts[@]}" -P "$DEPLOY_PORT" "$RUNNER_TEMP/site.tar.gz" "$RUNNER_TEMP/site.tar.gz.sha256" "${remote}:incoming/$release/"
+          ssh "${opts[@]}" -p "$DEPLOY_PORT" "$remote" "bash -s -- $release" < scripts/deploy-release.sh

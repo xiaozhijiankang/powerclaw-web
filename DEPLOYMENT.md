@@ -6,10 +6,10 @@
 - 已按“备份后重装”提交并完成 Ubuntu Server 24.04 LTS 重装。实例名称仍为 `CentOS-YIMZ`，不代表当前系统。
 - Nginx 已安装并运行，仅监听 `127.0.0.1:8080`，未开放公网 HTTP/HTTPS。
 - 配置文件：服务器 `/etc/nginx/sites-available/powerclaw`。
-- 网站目录：服务器 `/srv/powerclaw/current`，指向 `/srv/powerclaw/releases/20260910-1`。
+- 网站目录：服务器 `/srv/powerclaw/current`，指向 `/srv/powerclaw/releases/34459610109-1`。
 - 首版包含 17 个公开文件，8 个中英文页面通过 HTTP 逐字节核对；首页返回 200。
 - 首版压缩包 SHA-256：`16bad0df6a1da0b8b84a11d2d463a8e078a6720fc8e06d82e53c6da4f7319529`。
-- 首版通过腾讯云文件管理与自动化助手部署，尚未通过 GitHub Actions 发布。
+- 已通过 GitHub Actions 完成首次发布：[运行 34459610109](https://github.com/xiaozhijiankang/powerclaw-web/actions/runs/34459610109)，结果 success，8 页逐字节校验通过；前一版 20260910-1 保留。
 - 当前 GitHub 账号已获 admin 权限。旧 Pages 已从 legacy 改为 workflow，停止 main 分支的自动 Pages 发布；保留旧站现有部署和 powerclaw.app 域名。
 
 ## 发布流程
@@ -21,11 +21,11 @@
 各历史目录保留，当前无自动清理。
 
 这份流程已完成本地打包、shell 语法检查，并在服务器上执行了同一份发布脚本的首次成功发布。
-已创建 powerclaw-deploy 专用账号，无 sudo 权限，仅对官网目录及自身目录有写权限；SSH 已实测通过，主机公钥通过腾讯云控制台核对。tencent-server 环境已创建并限制为 main 分支。Secrets 上传被自动审批暂停，待用户明确授权；Actions 整体流程尚未实跑。
+已创建 powerclaw-deploy 专用账号，无 sudo 权限，仅对官网目录及自身目录有写权限；SSH 已实测通过，主机公钥通过腾讯云控制台核对。tencent-server 环境已创建并限制为 main 分支。用户已明确授权将专用私钥保存到环境 Secrets，5 项配置已完成；Actions 完整流程已实跑成功。本机临时部署私钥在验证后清理。
 
-## 管理员需配合的设置
+## 已完成的配置与维护参考
 
-管理权限与环境已配置；以下为完整维护步骤，Secrets 和首次运行尚待完成：
+以下配置均已完成，重新搭建时可参考：
 
 1. 检查 Settings → Pages 的发布分支。在国内版代码合并 main 前停用旧 Pages 自动发布，提前确认旧域名访问的切换安排。
 2. 创建 `tencent-server` environment，并限定允许部署的分支。
@@ -36,7 +36,7 @@
 | --- | --- |
 | `DEPLOY_HOST` | `58.87.96.124` |
 | `DEPLOY_PORT` | `22` |
-| `DEPLOY_USER` | 实际创建的专用部署账号 |
+| `DEPLOY_USER` | `powerclaw-deploy` |
 | `DEPLOY_SSH_KEY` | 专用账号对应的 SSH 私钥 |
 | `DEPLOY_KNOWN_HOSTS` | 通过可信腾讯云控制台核对的 SSH 主机公钥 known_hosts 行 |
 

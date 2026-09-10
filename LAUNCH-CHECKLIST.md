@@ -107,8 +107,8 @@ Codex 的交付：具体申报文案、接入操作指引、网站配置和备�
 
 - 已通过腾讯云“备份后重装”将新服务器切换为 Ubuntu Server 24.04 LTS。
 - 已安装 Nginx，首版 `20260910-1` 内部部署完成，8 页 HTTP 内容核对通过。
-- 仅监听 `127.0.0.1:8080`；未开放公网官网，未修改 DNS 或旧 GitHub Pages。
-- Actions、打包和发布脚本已在本地准备；待管理员权限、专用部署账号及 Secrets 配置后实跑。
+- 仅监听 `127.0.0.1:8080`；未开放公网官网，未修改 DNS；旧 GitHub Pages 已停止按分支自动发布。
+- Actions、打包和发布脚本已推送至 main；专用账号、环境及 Secrets 已配置，首次发布运行 34459610109 成功。
 - 详细目录与待办见 [部署说明](DEPLOYMENT.md)。
 
-部署后续：已配置专用账号 powerclaw-deploy 并验证 SSH；GitHub 已获 Admin 权限，tencent-server 环境限制 main。旧 Pages 已停止按分支自动发布，保留现有部署。私钥上传到 Secrets 等待明确授权，Actions 尚未实跑。
+部署后续：已配置专用账号 powerclaw-deploy 并验证 SSH；GitHub 已获 Admin 权限，tencent-server 环境限制 main。旧 Pages 已停止按分支自动发布，保留现有部署。用户明确授权后已配置 Secrets，Actions 首次运行成功，服务器当前版本为 34459610109-1，8 页验证通过。

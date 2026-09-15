@@ -1,0 +1,54 @@
+name: Deploy powerclaw.app GitHub Pages
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/deploy-powerclaw-pages.yml
+      - .well-known/apple-app-site-association
+      - apple-app-site-association
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: powerclaw-app-pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Keep the currently published international site intact. The main branch
+      # now contains the separate domestic site for powerclawapp.cn.
+      - name: Assemble powerclaw.app site
+        env:
+          LEGACY_SITE_REF: 102a5758e51057be7df9ebedd6875d7d355a49a4
+        run: |
+          set -euo pipefail
+          site="$RUNNER_TEMP/site"
+          mkdir -p "$site"
+          git archive "$LEGACY_SITE_REF" | tar -x -C "$site"
+          mkdir -p "$site/.well-known" "$site/app"
+          cp .well-known/apple-app-site-association "$site/.well-known/apple-app-site-association"
+          cp apple-app-site-association "$site/apple-app-site-association"
+          cp "$site/index.html" "$site/app/index.html"
+          touch "$site/.nojekyll"
+
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ runner.temp }}/site
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

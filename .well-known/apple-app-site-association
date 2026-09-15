@@ -1,0 +1,13 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "ZJ7N49B238.com.fitclaw.app",
+        "paths": [
+          "/app/*"
+        ]
+      }
+    ]
+  }
+}

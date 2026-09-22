@@ -3,6 +3,12 @@
     "apps": [],
     "details": [
       {
+        "appID": "U8WG6D4HH3.com.fitclaw.app",
+        "paths": [
+          "/app/*"
+        ]
+      },
+      {
         "appID": "ZJ7N49B238.com.fitclaw.app",
         "paths": [
           "/app/*"

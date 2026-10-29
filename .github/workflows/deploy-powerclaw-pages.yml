@@ -39,6 +39,18 @@ jobs:
           site="$RUNNER_TEMP/site"
           mkdir -p "$site"
           git archive "$LEGACY_SITE_REF" | tar -x -C "$site"
+          # Keep the international layout, with the current China App Store link.
+          python3 - "$site/index.html" <<'PY'
+          from pathlib import Path
+          import sys
+          page = Path(sys.argv[1])
+          original = page.read_text()
+          old_url = 'https://apps.apple.com/app/id6761604798'
+          new_url = 'https://apps.apple.com/cn/app/powerclaw/id6761604798'
+          if original.count(old_url) != 2:
+              raise SystemExit('Expected exactly two App Store links in the international homepage')
+          page.write_text(original.replace(old_url, new_url))
+          PY
           mkdir -p "$site/.well-known" "$site/app"
           cp .well-known/apple-app-site-association "$site/.well-known/apple-app-site-association"
           cp apple-app-site-association "$site/apple-app-site-association"
